@@ -39,16 +39,24 @@ const Dashboard = () => {
     const [favorites, setFavorites] = useState<any[]>([]);
 
     const applyFilters = () => {
+    const query = searchQuery.toLowerCase();
+
     const filtered = allProperties.filter((prop) => {
         const price = prop.price;
-        return (
-        prop.type === selectedType &&
-        price >= Number(minPrice) &&
-        price <= Number(maxPrice)
-        );
+        const matchesPrice = price >= Number(minPrice) && price <= Number(maxPrice);
+        const matchesSearch =
+        prop.title.toLowerCase().includes(query) ||
+        prop.location.toLowerCase().includes(query);
+        const matchesType = selectedType === 'All' || prop.type === selectedType;
+
+        return matchesPrice && matchesSearch && matchesType;
     });
+
+    console.log('Filtered properties:', filtered);
     setFilteredProperties(filtered);
     };
+
+
 
    const toggleBookmark = async (property: any) => {
     let updatedFavorites;
@@ -66,8 +74,12 @@ const Dashboard = () => {
 
     useEffect(() => {
     applyFilters();
-  }, [selectedType]);
+    }, [selectedType]);
     
+    useEffect(() => {
+    applyFilters();
+    }, [searchQuery]);
+
     useEffect(() => {
     const fetchFavorites = async () => {
         const saved = await loadFavorites();
@@ -122,18 +134,22 @@ const Dashboard = () => {
                     types={['House', 'Apartment', 'Condo']}
                 />
                 <ScrollView showsVerticalScrollIndicator={false}>
-                    {filteredProperties.map((property) => (
+                    {filteredProperties.length === 0 ? (
+                        <Text style={{ textAlign: 'center', marginTop: 20, color: '#555' }}>
+                        No results found.
+                        </Text>
+                    ) : (
+                        filteredProperties.map((property) => (
                         <PropertyCard
                             key={property.id}
                             image={property.image}
                             title={property.title}
                             location={property.location}
                             price={property.price}
-                            // isBookmarked={favorites.some(p => p.id === property.id)}
-                            isBookmarked={favorites.some((fav) => fav.id === property.id)}
+                            isBookmarked={favorites.some(fav => fav.id === property.id)}
                             onToggleBookmark={() => toggleBookmark(property)}
                             onPress={() =>
-                                navigation.navigate('PropertyDetail', {
+                            navigation.navigate('PropertyDetail', {
                                 image: property.image,
                                 title: property.title,
                                 location: property.location,
@@ -141,12 +157,13 @@ const Dashboard = () => {
                                 type: property.type,
                                 description: property.description,
                                 amenities: property.amenities,
-                                })
+                            })
                             }
-                            />
-
-                        ))}
+                        />
+                        ))
+                    )}
                 </ScrollView>
+
             </View>
             <DefaultModal
                 visible={modalVisible}
