@@ -110,8 +110,7 @@ const styles = StyleSheet.create({
   },
   features: {
     flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: "space-between",
     marginTop: 12,
    
   },
