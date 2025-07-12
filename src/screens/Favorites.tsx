@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import PropertyCard from '../components/PropertyCard';
+import { useTheme } from '../context/ThemeContext'; 
 import { useNavigation } from '@react-navigation/native';
 import { useFocusEffect } from '@react-navigation/native';
 
@@ -24,7 +25,8 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 const Favorites = () => {
   const [favorites, setFavorites] = useState<any[]>([]);
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-
+  const { theme } = useTheme();
+  const styles = getStyles(theme); 
   const loadFavorites = async () => {
     const stored = await AsyncStorage.getItem('favorites');
     setFavorites(stored ? JSON.parse(stored) : []);
@@ -85,19 +87,19 @@ const Favorites = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: '#fff',
-  },
-  emptyText: {
-  textAlign: 'center',
-  marginTop: 250,
-  fontSize: 16,
-  color: '#888',
-},
-
-});
+const getStyles = (theme: string) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      padding: 20,
+      backgroundColor: theme === 'dark' ? '#121212' : '#fff',
+    },
+    emptyText: {
+      textAlign: 'center',
+      marginTop: 250,
+      fontSize: 16,
+      color: theme === 'dark' ? '#aaa' : '#888',
+    },
+  });
 
 export default Favorites;
