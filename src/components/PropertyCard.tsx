@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Feather } from '@expo/vector-icons';
+import { FontAwesome } from '@expo/vector-icons'; 
 
 const PropertyCard = ({
   image,
@@ -24,11 +25,11 @@ const PropertyCard = ({
       <View style={styles.card}>
         <View style={styles.imageWrapper}>
           <Image source={image} style={styles.image} />
-          <TouchableOpacity style={styles.bookmarkIcon} onPress={onToggleBookmark}>
-            <Feather
-              name={isBookmarked ? 'bookmark' : 'bookmark'}
+          <TouchableOpacity style={[styles.bookmarkIcon, isBookmarked && styles.bookmarked]} onPress={onToggleBookmark}>
+            <FontAwesome
+              name={isBookmarked ? 'bookmark' : 'bookmark-o'} 
               size={20}
-              color={isBookmarked ? '#333' : '#aaa'}
+              color={isBookmarked ? '#fff' : '#555'}
             />
           </TouchableOpacity>
         </View>
@@ -101,6 +102,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#111',
   },
+  bookmarked: {
+    backgroundColor: '#0D1C84',
+    
+  },
+  
 
 });
 

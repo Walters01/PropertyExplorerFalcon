@@ -1,32 +1,103 @@
-import React from 'react';
-import { View, Text, StyleSheet, SafeAreaView } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, SafeAreaView } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import PropertyCard from '../components/PropertyCard';
+import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
 
+
+type RootStackParamList = {
+  PropertyDetail: {
+    image: any;
+    title: any;
+    location: any;
+    price: any;
+    type: any;
+    description: any;
+    amenities: any;
+  };
+
+};
+
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 const Favorites = () => {
-    return (
-        <SafeAreaView style={styles.container}>
-            <View style={styles.content}>
-                <Text style={styles.title}>Favorites</Text>
-            </View>
-        </SafeAreaView>
+  const [favorites, setFavorites] = useState<any[]>([]);
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+
+  const loadFavorites = async () => {
+    const stored = await AsyncStorage.getItem('favorites');
+    setFavorites(stored ? JSON.parse(stored) : []);
+  };
+
+  const toggleBookmark = async (property: any) => {
+    const updated = favorites.filter((p) => p.id !== property.id);
+    setFavorites(updated);
+    await AsyncStorage.setItem('favorites', JSON.stringify(updated));
+  };
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', loadFavorites);
+    return unsubscribe;
+  }, [navigation]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+        const fetchFavorites = async () => {
+        const stored = await AsyncStorage.getItem('favorites');
+        setFavorites(stored ? JSON.parse(stored) : []);
+        };
+        fetchFavorites();
+    }, [])
     );
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        {favorites.length === 0 ? (
+            <Text style={styles.emptyText}>No favorites yet</Text>
+        ) : (
+        favorites.map((property) => (
+            <PropertyCard
+                key={property.id}
+                image={property.image}
+                title={property.title}
+                location={property.location}
+                price={property.price}
+                isBookmarked={true}
+                onToggleBookmark={() => toggleBookmark(property)}
+                onPress={() =>
+                navigation.navigate('PropertyDetail', {
+                    image: property.image,
+                    title: property.title,
+                    location: property.location,
+                    price: property.price,
+                    type: property.type,
+                    description: property.description,
+                    amenities: property.amenities,
+                })
+                }
+        />
+    ))
+  )}
+</ScrollView>
+    </SafeAreaView>
+  );
 };
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        padding: 16,
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        textAlign: 'center',
-    },
-    content: {
-        flex: 1,
-        padding: 16,
-    },
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: '#fff',
+  },
+  emptyText: {
+  textAlign: 'center',
+  marginTop: 250,
+  fontSize: 16,
+  color: '#888',
+},
+
 });
 
 export default Favorites;

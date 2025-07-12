@@ -13,11 +13,12 @@ import { Feather } from '@expo/vector-icons'; // Import Feather icons
 interface DefaultModalProps {
   visible: boolean;
   onClose: (event: GestureResponderEvent) => void;
+  onApply?: () => void;
   title?: string;
   children?: React.ReactNode;
 }
 
-const DefaultModal: React.FC<DefaultModalProps> = ({ visible, onClose, title, children }) => {
+const DefaultModal: React.FC<DefaultModalProps> = ({ visible, onClose, onApply, title, children }) => {
   return (
     <Modal animationType="fade" transparent visible={visible}>
       <View style={styles.overlay}>
@@ -30,7 +31,16 @@ const DefaultModal: React.FC<DefaultModalProps> = ({ visible, onClose, title, ch
 
           <View style={styles.content}>{children}</View>
 
-          <Pressable style={styles.applyButton} onPress={onClose}>
+          <Pressable
+            style={styles.applyButton}
+            onPress={() => {
+              if (onApply) {
+                onApply(); // ✅ use passed prop
+              } else {
+                onClose({} as GestureResponderEvent); // fallback with dummy event
+              }
+            }}
+          >
             <Text style={styles.applyText}>Apply</Text>
           </Pressable>
         </View>
@@ -38,6 +48,7 @@ const DefaultModal: React.FC<DefaultModalProps> = ({ visible, onClose, title, ch
     </Modal>
   );
 };
+
 
 const styles = StyleSheet.create({
   overlay: {

@@ -15,7 +15,7 @@ export default function AppNavigator() {
         options={{ 
           title: 'Property Details',
           headerShown: true,
-           headerTitleAlign: 'center',
+          headerTitleAlign: 'center',
       
        }} />
     </Stack.Navigator>

@@ -22,11 +22,14 @@ export default function TabNavigator() {
                 }
                 return <Feather name={iconName} size={size} color={color} />;
             },
-            tabBarActiveTintColor: 'gray',
-            tabBarInactiveTintColor: 'gray',
-            })}>
+           tabBarActiveTintColor: '#0D1C84',     
+           tabBarInactiveTintColor: '#999999',   
+           tabBarLabelStyle: {
+            fontSize: 12,
+           },
+        })}>
       <Tab.Screen name="Home" component={Dashboard} options={{headerShown: false,}} />
-      <Tab.Screen name="Favorites" component={Favorites} options={{headerShown: false,}} />
+      <Tab.Screen name="Favorites" component={Favorites} options={{headerShown: true, headerTitleAlign: 'center' }} />
       <Tab.Screen name="Profile" component={Profile} options={{headerShown: false,}} />
   
     </Tab.Navigator>

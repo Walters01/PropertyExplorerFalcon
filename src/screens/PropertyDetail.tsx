@@ -122,9 +122,12 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   featureText: {
-    marginTop: 6,
+    marginTop: 5,
     fontSize: 14,
     color: "#333",
+    textAlign: "center",
+    fontWeight: "bold",
+    lineHeight: 20,
   },
   button: {
     marginTop: 24,
@@ -136,6 +139,7 @@ const styles = StyleSheet.create({
   buttonText: {
     fontWeight: "bold",
     fontSize: 16,
+    
   },
 });
 

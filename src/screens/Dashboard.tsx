@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, Image, TouchableOpacity, ScrollView, Pressable, TextInput  } from 'react-native';
 import Feather from 'react-native-vector-icons/Feather';
 import Slider from '@react-native-community/slider';
@@ -6,10 +6,13 @@ import SearchBar from '../components/SearchBar';
 import PropertyTypeSelector from '../components/PropertyTypeSelector';
 import PropertyCard from '../components/PropertyCard';
 import DefaultModal from '../components/DefaultModal';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from '@react-navigation/native';
 import { allProperties } from '../data/properties';
 import { useNavigation } from '@react-navigation/native';
 import type { StackNavigationProp } from '@react-navigation/stack';
 import PropertyDetail from './PropertyDetail';
+import { loadFavorites } from '../utils/storage';
 
 type RootStackParamList = {
     Dashboard: undefined;
@@ -28,13 +31,61 @@ const Dashboard = () => {
     const navigation = useNavigation<StackNavigationProp<RootStackParamList, 'Dashboard'>>();
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedType, setSelectedType] = useState('Condo');
-    const filteredProperties = allProperties.filter(
-    (prop) => prop.type === selectedType
-    );
-    const [minPrice, setMinPrice] = useState('');
-    const [maxPrice, setMaxPrice] = useState('');
+    const [filteredProperties, setFilteredProperties] = useState(allProperties);
+    const [minPrice, setMinPrice] = useState('500');
+    const [maxPrice, setMaxPrice] = useState('1500');
     const [isFilterModalVisible, setIsFilterModalVisible] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
+    const [favorites, setFavorites] = useState<any[]>([]);
+
+    const applyFilters = () => {
+    const filtered = allProperties.filter((prop) => {
+        const price = prop.price;
+        return (
+        prop.type === selectedType &&
+        price >= Number(minPrice) &&
+        price <= Number(maxPrice)
+        );
+    });
+    setFilteredProperties(filtered);
+    };
+
+   const toggleBookmark = async (property: any) => {
+    let updatedFavorites;
+    const exists = favorites.find(p => p.id === property.id);
+
+    if (exists) {
+        updatedFavorites = favorites.filter(p => p.id !== property.id);
+    } else {
+        updatedFavorites = [...favorites, property];
+    }
+
+    setFavorites(updatedFavorites);
+    await AsyncStorage.setItem('favorites', JSON.stringify(updatedFavorites));
+    };
+
+    useEffect(() => {
+    applyFilters();
+  }, [selectedType]);
+    
+    useEffect(() => {
+    const fetchFavorites = async () => {
+        const saved = await loadFavorites();
+        setFavorites(saved);
+    };
+    fetchFavorites();
+    }, []);
+
+    useFocusEffect(
+    React.useCallback(() => {
+        const fetchFavorites = async () => {
+        const stored = await AsyncStorage.getItem('favorites');
+        setFavorites(stored ? JSON.parse(stored) : []);
+        };
+        fetchFavorites();
+    }, [])
+    );
+
 
     return (
         <SafeAreaView style={styles.container}>
@@ -78,28 +129,33 @@ const Dashboard = () => {
                             title={property.title}
                             location={property.location}
                             price={property.price}
-                            isBookmarked={true}
-                            onToggleBookmark={() => console.log('Bookmark')}
+                            // isBookmarked={favorites.some(p => p.id === property.id)}
+                            isBookmarked={favorites.some((fav) => fav.id === property.id)}
+                            onToggleBookmark={() => toggleBookmark(property)}
                             onPress={() =>
                                 navigation.navigate('PropertyDetail', {
-                                    image: property.image,
-                                    title: property.title,
-                                    location: property.location,
-                                    price: property.price,
-                                    type: property.type,
-                                    description: property.description,
-                                    amenities: property.amenities,
+                                image: property.image,
+                                title: property.title,
+                                location: property.location,
+                                price: property.price,
+                                type: property.type,
+                                description: property.description,
+                                amenities: property.amenities,
                                 })
-                                }
-                            
+                            }
                             />
+
                         ))}
                 </ScrollView>
             </View>
             <DefaultModal
                 visible={modalVisible}
-                onClose={() => setModalVisible(false)}
-                title="Filter by Price Range"
+                    onClose={() => setModalVisible(false)}
+                    title="Filter by Price Range"
+                    onApply={() => {
+                    applyFilters(); 
+                    setModalVisible(false);
+                    }}
                 >
                 <Text style={{ fontSize: 16, marginBottom: 8 }}>
                     Selected Range: ${minPrice} - ${maxPrice}
@@ -139,10 +195,11 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#fff',
-        padding: 30,
+        padding: 20,
     },
     content: {
         flex: 1,
+        paddingTop: 10,
     },
     title: {
         fontSize: 24,
