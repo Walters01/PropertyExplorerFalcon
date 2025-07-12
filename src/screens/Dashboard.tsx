@@ -135,7 +135,7 @@ const Dashboard = () => {
                 />
                 <ScrollView showsVerticalScrollIndicator={false}>
                     {filteredProperties.length === 0 ? (
-                        <Text style={{ textAlign: 'center', marginTop: 20, color: '#555' }}>
+                        <Text style={{ textAlign: 'center', marginTop: 200, color: '#555' }}>
                         🔎 No results found.
                         </Text>
                     ) : (
