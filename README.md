@@ -3,7 +3,10 @@ o Setup instructions
   1. npm install
   2. npx expo start
   3. Download expo on playstore and scan the qr or run it in your android emulator
+
+     
 o Explanation of your app structure and tech choices
+
   App Structure:
     /assets               → Static files like images
     /src
