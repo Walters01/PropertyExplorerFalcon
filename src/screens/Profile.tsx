@@ -42,13 +42,12 @@ const Profile = () => {
       </View>
 
       <View style={styles.section}>
-        {/* Theme Toggle */}
-        <View style={styles.row}>
+        <View style={styles.rowSwitch}>
           <Feather name="sun" size={20} color={isDark ? '#fff' : '#333'} />
           <Text style={[styles.rowText, { color: isDark ? '#fff' : '#000' }]}>
             Dark Mode
           </Text>
-          <View style={{ flex: 1, alignItems: 'flex-end' }}>
+          <View style={{ alignItems: 'flex-end',  }}>
             <Switch
               value={isDark}
               onValueChange={toggleTheme} 
@@ -57,7 +56,6 @@ const Profile = () => {
             />
           </View>
         </View>
-
         <TouchableOpacity style={styles.row}>
           <Feather name="settings" size={20} color={isDark ? '#fff' : '#333'} />
           <Text style={[styles.rowText, { color: isDark ? '#fff' : '#000' }]}>
@@ -65,9 +63,7 @@ const Profile = () => {
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.row}
-          onPress={() => {
+        <TouchableOpacity style={styles.row} onPress={() => {
             navigation.reset({
               index: 0,
               routes: [{ name: 'Welcome' }],
@@ -124,8 +120,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 15,
-    borderBottomColor: '#eee',
-    borderBottomWidth: 1,
+  },
+   rowSwitch: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 15,
+    marginBottom: -14,
   },
   rowText: {
     fontSize: 16,

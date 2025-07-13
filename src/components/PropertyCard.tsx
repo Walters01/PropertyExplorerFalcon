@@ -108,7 +108,7 @@ const getStyles = (theme: string) =>
     price: {
       fontSize: 16,
       fontWeight: 'bold',
-      color: theme === 'dark' ? '#fff' : '#111',
+      color: theme === 'dark' ? '#FFD700' : '#0D1C84',
     },
   });
 

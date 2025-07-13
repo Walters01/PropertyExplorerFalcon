@@ -25,12 +25,10 @@ const Welcome = ({ navigation }: WelcomeProps) => {
   return (
     <SafeAreaView style={styles.container}>
       <Image
-       
         source={require('../../assets/images/cover.jpg')} 
         style={styles.image}
         resizeMode="cover"
       />
-
       <View style={styles.content}>
         <Text style={styles.title}>Find Your{'\n'}<Text style={styles.bold}>Best Property</Text></Text>
         <Text style={styles.subtitle}>
@@ -56,7 +54,7 @@ const getStyles = (theme: string) =>
     },
     image: {
       width,
-      flex: 2,
+      flex: 1.5,
       borderBottomRightRadius: 20,
       borderBottomLeftRadius: 20,
     },
@@ -64,7 +62,7 @@ const getStyles = (theme: string) =>
       padding: 40,
       flex: 1,
       justifyContent: 'space-between',
-      marginBottom: 30,
+      paddingBottom: 100,
     },
     title: {
       fontSize: 35,
@@ -77,7 +75,6 @@ const getStyles = (theme: string) =>
     subtitle: {
       fontSize: 14,
       color: theme === 'dark' ? '#ccc' : '#555',
-      marginTop: 12,
       lineHeight: 20,
     },
     button: {
@@ -85,7 +82,6 @@ const getStyles = (theme: string) =>
       paddingVertical: 16,
       alignItems: 'center',
       borderRadius: 8,
-      marginTop: 30,
     },
     buttonText: {
       fontSize: 16,
